@@ -1,0 +1,32 @@
+{
+  "name": "football-ai-predictor",
+  "version": "1.0.0",
+  "description": "AI-powered football match analysis and predictions",
+  "scripts": {
+    "dev": "concurrently \"node server.js\" \"vite --port 5173\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server.js",
+    "client": "vite"
+  },
+  "dependencies": {
+    "@vercel/kv": "^3.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "groq-sdk": "^1.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.5"
+  }
+}

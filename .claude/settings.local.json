@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(npm install *)",
+      "Bash(npx vite *)",
+      "Bash(node -e ' *)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3001/api/analyze -X POST -H \"Content-Type: application/json\" -d '{\"matchData\":\"test\"}')",
+      "Bash(echo \"EXIT:$?\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npm uninstall *)",
+      "Bash(npx kill-port *)",
+      "Bash(curl -s http://localhost:3001/api/matches)",
+      "Bash(node -e \"process.exit\\(\\)\")",
+      "Bash(pkill -f \"node server.js\")",
+      "Bash(pkill -f \"node -e\")",
+      "Bash(PORT=3002 node server.js)",
+      "Bash(curl -s http://localhost:3002/api/matches)",
+      "Bash(netstat -ano)",
+      "Bash(lsof -ti:3001)",
+      "Bash(kill 672 588 607)",
+      "Bash(curl -s -X POST http://localhost:3001/api/analyze -H 'Content-Type: application/json' -d '{\"matchData\":\"Mexico vs South Africa, FIFA World Cup 2026\"}')",
+      "Bash(cmd.exe /c \"netstat -ano | findstr :3001\")",
+      "Bash(cmd.exe /c \"netstat -ano\")",
+      "Bash(curl -s http://localhost:3001/api/analyze -X POST -H 'Content-Type: application/json' -d '{\"matchData\":\"Mexico vs South Africa, FIFA World Cup 2026\"}')",
+      "Bash(curl -s \"http://localhost:3001/api/team-form?homeId=769&awayId=9396\")"
+    ]
+  }
+}
