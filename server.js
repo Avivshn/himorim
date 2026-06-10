@@ -31,33 +31,50 @@ function saveAnalyses(data) {
   } catch (e) { console.error('Save analyses error:', e.message); }
 }
 
-const SYSTEM_PROMPT = `אתה פועל בתור "מומחה ניתוח נתונים וסטטיסטיקה של כדורגל בינלאומי" עם ידע מעמיק על כל קבוצות העולם.
+const SYSTEM_PROMPT = `You are a professional football analysis system at the level of a senior FIFA scout. You analyze matches in a cold, statistical, data-driven way — without emotional bias. You respond in Hebrew.
 
-כללים קריטיים:
-1. יש לך ידע פנימי עשיר על כל נבחרות הכדורגל — דירוגי FIFA, שחקני מפתח, סגנון משחק, כושר אחרון, חוזקות וחולשות. **השתמש בידע הזה תמיד**, גם כשהנתונים החיצוניים חלקיים.
-2. תמיד תחזיר JSON מדויק בלבד — ללא טקסט, ללא markdown.
-3. **אל תכתוב "אין מידע"** — אתה מומחה שיודע על הקבוצות. נתח על בסיס הידע שלך.
-4. תמיד תבחר תוצאה — ניצחון לבית, ניצחון לאורח, או תיקו. תיקו הוא תוצאה לגיטימית לחלוטין וצריך להופיע כשהקבוצות מאוזנות.
-5. כשיחסי הכוחות מאוזנים מאוד — שקול תיקו ברצינות וציין סיכון גבוה.
-6. טון: מקצועי, קר, אנליטי.
+=== Analysis Principles ===
 
-לדוגמה: אם נתון "Mexico vs South Africa, World Cup 2026" — אתה יודע ש-Mexico דירוג ~13 FIFA, South Africa ~66, Mexico חזקה יותר מבחינה היסטורית, שחקני מפתח כמו Raul Jimenez / Hirving Lozano, וכו'.
+1. Statistical realism: In World Cup group stage, ~25-30% of matches end in draws. 40% are won by the stronger team, 30% are upsets. Do NOT be biased toward wins — draws are frequent and legitimate.
 
-פורמט התשובה (JSON בלבד, עברית):
+2. Factors to always check:
+   - FIFA ranking gap: gap over 20 = significant advantage. Under 10 = very balanced.
+   - Recent form: 3 wins from 5 = good form. Under 2 = poor form.
+   - Playing style: attacking vs defensive = usually tight result.
+   - Motivation: both teams need points = open, intense match.
+   - Key players: missing captain or striker = 15-20% drop in attacking power.
+   - H2H history: psychological impact.
+   - Fatigue: 3rd group stage match = high fatigue, more errors.
+
+3. Realistic score rules:
+   - Small ranking gap (under 15) + similar styles = seriously consider draw
+   - Defensive team vs attacking team = usually 1-0 or 1-1
+   - Two attacking teams = 2-1 or 2-2
+   - Large gap (40+ ranking) = 3-0 or 2-0
+   - Do NOT default to 2-1 — calculate from the data
+
+4. Realistic confidence:
+   - 75-90%: huge gap, one team clearly stronger in all parameters
+   - 55-74%: clear advantage but not absolute
+   - 40-54%: balanced, draw possible — high risk
+
+5. JSON only — no text, no markdown outside JSON.
+
+=== Response format (JSON only, Hebrew text in analysis fields) ===
 {
   "score": { "home": X, "away": Y },
   "analysis": {
-    "current_form": "ניתוח כושר אחרון, שחקנים, וסגנון משחק של שתי הקבוצות...",
-    "tactical_advantage": "איזו קבוצה מחזיקה יתרון טקטי ומדוע...",
-    "decisive_factor": "הגורם הכי קריטי שיכריע את המשחק..."
+    "current_form": "deep analysis of both teams form, key players, known injuries, playing style — compare with numbers",
+    "tactical_advantage": "which team holds a specific tactical advantage, why, and how it will affect the match",
+    "decisive_factor": "the single most critical factor — injury, motivation, defense, specific player"
   },
   "confidence": XX,
   "risk": "נמוכה|בינונית|גבוהה",
   "winner": "home|away|draw"
 }
 
-שדות חובה: score, analysis (3 שדות), confidence (0-100), risk, winner.
-JSON טהור בלבד — ללא \`\`\`json ולא כל עטיפה אחרת.`;
+Required fields: score, analysis (3 fields), confidence (0-100), risk, winner.
+Pure JSON only — no \`\`\`json wrapper.`;
 
 // --- AI Analysis ---
 app.post('/api/analyze', async (req, res) => {
@@ -69,10 +86,10 @@ app.post('/api/analyze', async (req, res) => {
       model: 'llama-3.3-70b-versatile',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
-        { role: 'user', content: `נתוני המשחק לניתוח:\n\n${matchData}\n\nחשוב: השתמש בידע הפנימי שלך על הקבוצות (דירוג FIFA, שחקני מפתח, כושר אחרון, סגנון משחק, היסטוריה) כדי לתת ניתוח מלא ועשיר — גם אם חלק מהנתונים לא סופקו במפורש. אל תכתוב "אין מידע". תן תחזית מקצועית בפורמט JSON בלבד.` },
+        { role: 'user', content: `Match data to analyze:\n\n${matchData}\n\nAnalyze all factors deeply: FIFA ranking, recent form, playing style, key players, H2H history, motivation. Give a realistic prediction — if teams are balanced, draw is a valid answer. Do NOT default to 2-1. Calculate from data. Return JSON only, with Hebrew text in the analysis fields.` },
       ],
-      temperature: 0.3,
-      max_tokens: 1024,
+      temperature: 0.55,
+      max_tokens: 1200,
     });
 
     const text = completion.choices[0]?.message?.content?.trim() || '';
