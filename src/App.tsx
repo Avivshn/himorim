@@ -69,14 +69,26 @@ export default function App() {
     const d = new Date(match.utcDate);
     const dateStr = d.toLocaleDateString('he-IL', { day: 'numeric', month: 'long', year: 'numeric' });
 
+    // WC2026 host nations have real home advantage
+    const HOST_NATIONS = ['Canada', 'United States', 'USA', 'Mexico'];
+    const homeIsHost = HOST_NATIONS.some(h => match.homeTeam.name.includes(h));
+    const awayIsHost = HOST_NATIONS.some(h => match.awayTeam.name.includes(h));
+    const isHost = homeIsHost || awayIsHost;
+
+    const hostNote = homeIsHost
+      ? `⚠️ יתרון בית: ${match.homeTeam.name} משחקת על מגרש ביתי — קהל ביתי מלא, הכרת המגרשים, אין עייפות טיסות. יתרון עצום.`
+      : awayIsHost
+      ? `⚠️ יתרון בית: ${match.awayTeam.name} (קבוצת אורח על הנייר) משחקת בפועל על מגרש ביתי — קהל ביתי מלא, הכרת המגרשים, אין עייפות טיסות. יתרון עצום.`
+      : '';
+
     let form: MatchFormData = {
       ...EMPTY_FORM,
       homeTeam: match.homeTeam.name,
       awayTeam: match.awayTeam.name,
       competition: 'FIFA World Cup 2026',
-      venue: 'ארה"ב / קנדה / מקסיקו',
-      isNeutralVenue: true,
-      additionalNotes: `תאריך: ${dateStr} | שלב: ${match.stage}${match.group ? ` | ${match.group}` : ''}`,
+      venue: homeIsHost ? match.homeTeam.name + ' — מגרש בית' : awayIsHost ? match.awayTeam.name + ' — מגרש בית' : 'ארה"ב / קנדה / מקסיקו',
+      isNeutralVenue: !isHost,
+      additionalNotes: `תאריך: ${dateStr} | שלב: ${match.stage}${match.group ? ` | ${match.group}` : ''}${hostNote ? '\n\n' + hostNote : ''}`,
     };
 
     try {
